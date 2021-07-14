@@ -5,9 +5,7 @@ import Router from './router';
 import reportWebVitals from './reportWebVitals';
 import 'antd/dist/antd.css';
 ReactDOM.render(
-  <React.StrictMode>
-    <Router />
-  </React.StrictMode>,
+    <Router />,
   document.getElementById('root')
 );
 
