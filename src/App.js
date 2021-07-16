@@ -2,18 +2,27 @@ import {Link, withRouter} from "react-router-dom";
 import {Button} from "antd"
 import React from "react";
 
+import {ThemeContext, themes} from "./utils/common";
 import Welcome from "./components/welcome";
 import TemperatureInput from "./components/TemperatureInput";
 import logo from './logo.svg';
 import './App.css';
+
+const ref=React.createRef()
 
 class App extends React.Component {
     constructor() {
         super();
         this.state = {
             temperature: '',
-            type: ''
+            type: '',
+            theme: themes.light
         }
+    }
+
+
+    componentDidMount() {
+        console.log('ref',ref)
     }
 
     CelsiusInputChange = (value) => {
@@ -38,6 +47,15 @@ class App extends React.Component {
         return (celsius * 9 / 5) + 32;
     }
 
+    toggleTheme = () => {
+        this.setState(state => ({
+            theme:
+                state.theme === themes.dark
+                    ? themes.light
+                    : themes.dark,
+        }));
+    }
+
     render() {
         let {temperature, type} = this.state
         let Celsius = temperature, Fahrenheit = temperature
@@ -53,11 +71,12 @@ class App extends React.Component {
             name: '苑博林',
             age: 25
         };
+        let {background} = this.context
         return (
             <div className="App">
                 <header className="App-header">
                     <img src={logo} className="App-logo" alt="logo"/>
-                    <p>
+                    <p style={{background: background}}>
                         Edit <code>src/App.js</code> and save to reload.
                     </p>
                     <a
@@ -74,10 +93,14 @@ class App extends React.Component {
                     <Link to={`/login/${JSON.stringify(id)}`}>去登录</Link>
                     {/*使用history跳转*/}
                     <Button onClick={() => this.props.history.push('detail')}>去详情</Button>
-                    <Welcome>
-                        <div>我是solt插槽</div>
-                    </Welcome>
-                    <TemperatureInput scale={"C"} temperature={Celsius}
+                    <Button onClick={this.toggleTheme}>修改颜色</Button>
+                    <ThemeContext.Provider value={this.state.theme}>
+                        <Welcome>
+                            <div>我是solt插槽</div>
+                        </Welcome>
+                    </ThemeContext.Provider>
+
+                    <TemperatureInput ref={ref} scale={"C"} temperature={Celsius}
                                       CelsiusInputChange={this.CelsiusInputChange}></TemperatureInput>
                     <TemperatureInput scale={"F"} temperature={Fahrenheit}
                                       FahrenheitInputChange={this.FahrenheitInputChange}></TemperatureInput>
@@ -87,4 +110,5 @@ class App extends React.Component {
     }
 }
 
+App.contextType = ThemeContext
 export default withRouter(App);
